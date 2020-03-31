@@ -6,7 +6,7 @@ let units = 0 ; //start unit
 const sortedCompanies: Promise<Companies> = loadAll();
 sortedCompanies.then(el => renderCompany(el, units));
 
-async function loadAll() {
+async function loadAll(): Promise<Companies> {
     const user: Users          = await fetch(usersSite).then(res => res.json());
     const companies: Companies = await fetch(companiesSite).then(res => res.json());
 
@@ -17,7 +17,7 @@ type Users =  Array<{name:string, email: string, uris: {company: string}}>;
 type Companies = Array< {name: string, uri: string,  usersAmount?: number, users?: Users}>;
 
 function sortCompanyById(users: Users, companies: Companies ): Companies{
-    let uri;
+    let uri: String;
     let sortedCompaniesAddedUsers;
     companies.map(company => {
         company.usersAmount = 0;
@@ -29,7 +29,7 @@ function sortCompanyById(users: Users, companies: Companies ): Companies{
         company.usersAmount = sortedCompaniesAddedUsers.length;
         company.users = sortedCompaniesAddedUsers;
     });
-    companies.sort((a, b) => a.usersAmount - b.usersAmount);
+    companies.sort((a, b) => a.usersAmount! - b.usersAmount!);
     return companies;
 }
 
@@ -40,7 +40,7 @@ function renderCompany(srtCompanies: Companies, limit: number): void {
                   <td><button id="${company.uri}but" class="btn btn-light" 
                   onclick="showUsers('${company.uri}', ${company.usersAmount}, ${company.usersAmount})" >
                   Show users</button></td></tr>`;
-        company.users.forEach( (us) =>{
+        company.users!.forEach( (us) =>{
                 table += `<tr style="display: none"><td>${us.name}</td><td>${us.email}</td><td></td></tr>`
             }
         )
@@ -63,24 +63,18 @@ function prevPage(): void{
         sortedCompanies.then(el => renderCompany(el, units))
     }
 }
-function showUsers(uri: string, users: number) {
+function showUsers(uri: string, users: number): void {
     let displayedCompany = (document.getElementById(`${uri}`)! as HTMLElement).nextElementSibling;
     if (users > 0) {
         if (displayedCompany instanceof HTMLElement && displayedCompany.style.display === 'none')
             for(let i=0; i < users; i++){
-                displayedCompany.setAttribute("style", "display:''");
-                displayedCompany = displayedCompany.nextElementSibling;
+                displayedCompany!.setAttribute("style", "display:''");
+                displayedCompany = displayedCompany!.nextElementSibling;
             } else {
             for(let i=0; i < users; i++){
-                displayedCompany.setAttribute("style", "display:none");
-                displayedCompany = displayedCompany.nextElementSibling;
+                displayedCompany!.setAttribute("style", "display:none");
+                displayedCompany = displayedCompany!.nextElementSibling;
             }
         }
     }
 }
-
-
-
-
-
-
